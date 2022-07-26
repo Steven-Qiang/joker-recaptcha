@@ -488,7 +488,7 @@ body {
 }
 
 .rc-anchor-invisible-text {
-    background: #4a90e2;
+    background: #1a73e8;
     color: white;
     display: flex;
     flex-basis: 166px;
@@ -569,7 +569,7 @@ body {
 }
 
 .rc-button-default {
-    background: #4a90e2;
+    background: #1a73e8;
     border: 0;
     border-radius: 2px;
     color: #fff;
@@ -850,7 +850,7 @@ body {
     padding: 10px;
     margin: 10px;
     height: 20%;
-    background-color: #4a90e2
+    background-color: #1a73e8
 }
 
 .rc-doscaptcha-header-text {
@@ -1007,7 +1007,7 @@ td:focus {
     display: none;
     opacity: 0;
     position: absolute;
-    background-color: #4a90e2;
+    background-color: #1a73e8;
     width: 100%;
     height: 100%;
     z-index: 2;
@@ -1163,11 +1163,11 @@ td:focus {
 }
 
 .rc-imageselect-desc-wrapper {
-    background-color: #4a90e2;
+    background-color: #1a73e8;
     position: relative;
     padding: 24px;
     color: white;
-    /* height: 115px; */
+    height: 66px;
     font-size: 16px
 }
 
@@ -1392,7 +1392,7 @@ td:focus {
 }
 
 .rc-response-input-field:focus {
-    border: 1px solid #4a90e2
+    border: 1px solid #1a73e8
 }
 
 .rc-response-input-field-error, .rc-response-input-field-error:focus {
