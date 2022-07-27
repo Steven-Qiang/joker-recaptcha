@@ -1,5 +1,8 @@
 <template>
-  <Captcha />
+  <div>
+    <h2>享受被骗当小丑的感觉吧。</h2>
+    <Captcha />
+  </div>
 </template>
 
 <script>
