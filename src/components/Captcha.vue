@@ -45,7 +45,7 @@
                             <div class="rc-image-tile-wrapper" style="width: 126px; height: 126px">
                               <img
                                 class="rc-image-tile-33"
-                                :src="require('@/assets/payload/' + payload)"
+                                :src="require('../assets/payload/' + payload)"
                                 :style="{ top: '-' + (tr - 1) * 100 + '%', left: '-' + (td - 1) * 100 + '%' }"
                               />
                               <div class="rc-image-tile-overlay"></div>
@@ -120,10 +120,10 @@
 
 <script>
 /** css 和 html 来源为谷歌recaptcha官方。 */
-import '@/assets/styles__ltr.css';
+import '../assets/styles__ltr.css';
 
 const payload_list = require
-  .context('@/assets/payload', true, /^.*\.png$/)
+  .context('../assets/payload', true, /^.*\.png$/)
   .keys()
   .map((x) => x.replace('./', ''));
 const payload_random = () => payload_list[Math.floor(Math.random() * payload_list.length)];
