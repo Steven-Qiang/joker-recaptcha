@@ -32,7 +32,11 @@
                     class="recaptcha-checkbox-spinner"
                     role="presentation"
                     v-show="el_rc_loading"
-                    :style="{ 'animation-play-state': 'running', opacity: el_rc_loading ? 1 : 0, transform: 'scale(0)' }"
+                    :style="{
+                      'animation-play-state': 'running',
+                      opacity: el_rc_loading ? 1 : 0,
+                      transform: 'scale(0)',
+                    }"
                   >
                     <div class="recaptcha-checkbox-spinner-overlay" style="animation-play-state: running;"></div>
                   </div>
@@ -76,21 +80,23 @@
     <div :style="style_selector">
       <!-- 遮罩层 -->
       <div
+        v-show="el_arrow"
         class="g-recaptcha-bubble-arrow"
         style="border-width: 11px; border-style: solid; border-color: transparent rgb(204, 204, 204) transparent transparent; border-image: initial; width: 0px; height: 0px; position: absolute; pointer-events: none; margin-top: -11px; z-index: 2000000000; top: 35px; right: 100%;"
       ></div>
       <div
+        v-show="el_arrow"
         class="g-recaptcha-bubble-arrow"
         style="border-width: 10px; border-style: solid; border-color: transparent rgb(255, 255, 255) transparent transparent; border-image: initial; width: 0px; height: 0px; position: absolute; pointer-events: none; margin-top: -10px; z-index: 2000000000; top: 35px; right: 100%;"
       ></div>
-      <div id="rc-imageselect" class="gc-size-wrap">
+      <div id="rc-imageselect">
         <div id="rc-imageselect">
           <div class="rc-imageselect-response-field"></div>
           <span class="rc-imageselect-tabloop-begin" tabindex="0"></span>
           <div class="rc-imageselect-payload">
-            <div class="rc-imageselect-instructions" style="margin-bottom: 7px;">
+            <div class="rc-imageselect-instructions" style="margin-bottom: 7px;" ref="instructions">
               <div class="rc-imageselect-desc-wrapper">
-                <div class="rc-imageselect-desc-no-canonical" style="width: 352px; font-size: 12px;">
+                <div class="rc-imageselect-desc-no-canonical" style="font-size: 12px;">
                   选择所有包含<strong style="font-size: 28px;">{{ str_object_name }}</strong
                   >的所有图片
                 </div>
@@ -119,7 +125,13 @@
                         @click="_select(tr + '_' + td)"
                       >
                         <div class="rc-image-tile-target">
-                          <div class="rc-image-tile-wrapper" style="width: 126px; height: 126px">
+                          <div
+                            class="rc-image-tile-wrapper"
+                            :style="{
+                              width: wrapper_size + 'px',
+                              height: wrapper_size + 'px',
+                            }"
+                          >
                             <img
                               class="rc-image-tile-33"
                               :src="require('../assets/payload/' + str_payload_filename)"
@@ -135,7 +147,10 @@
                 </table>
               </div>
             </div>
-            <div class="rc-imageselect-incorrect-response" v-show="str_error_code == 'rc-imageselect-incorrect-response'">
+            <div
+              class="rc-imageselect-incorrect-response"
+              v-show="str_error_code == 'rc-imageselect-incorrect-response'"
+            >
               请重试。
             </div>
             <div class="rc-imageselect-error-select-more" v-show="str_error_code == 'rc-imageselect-error-select-more'">
@@ -213,23 +228,33 @@ export default {
       el_show: false,
       el_rc_loading: false,
       el_rel_loading: false,
+      el_arrow: false,
       style_selector: {
         'background-color': 'rgb(255, 255, 255)',
-        'border': '1px solid rgb(204, 204, 204)',
+        border: '1px solid rgb(204, 204, 204)',
         'box-shadow': ' rgb(0 0 0 / 20%) 2px 2px 3px',
-        'position': 'absolute',
-        'transition': 'visibility 0s linear 0s, opacity 0.3s linear 0s',
-        'opacity': '1',
+        position: 'absolute',
+        transition: 'visibility 0s linear 0s, opacity 0.3s linear 0s',
+        opacity: '1',
         'z-index': '2000000000',
-        'visibility': 'hidden',
+        visibility: 'hidden',
       },
 
       list_selected: [],
-      
+
+      wrapper_size: 126,
       str_error_code: '',
       str_object_name: object_random(),
       str_payload_filename: payload_random(),
     };
+  },
+  mounted() {
+    window.addEventListener('resize', () => {
+      if (this.el_show) {
+        this._fix_position();
+      }
+    });
+    this._show();
   },
   methods: {
     async _reload() {
@@ -272,14 +297,32 @@ export default {
       if (this.list_selected.includes(key)) return (this.list_selected = this.list_selected.filter((x) => x != key));
       this.list_selected.push(key);
     },
+    async _fix_position() {
+      const _bounding = this.$refs.container.getBoundingClientRect();
+      const _style = this.style_selector;
+      const _m = window.innerWidth < 470;
+      this.el_arrow = !_m;
+      if (_m) {
+        const _width = window.innerWidth;
+        _style.width = _width - 5 + 'px';
+        this.wrapper_size = Math.floor((_width - 5) / 3) - 7.55555;
+        // 居中
+        _style.left = 0;
+        _style.right = 0;
+        _style.margin = 'auto';
+      } else {
+        _style.width = '408px';
+        this.wrapper_size = 128.5;
+        _style.left = _m ? 0 : _bounding.left + 51 + 'px';
+        _style.top = _bounding.top + 2 + 'px';
+        delete _style.margin;
+      }
+    },
   },
   watch: {
     el_show(value) {
-      const _bounding = this.$refs.container.getBoundingClientRect();
+      this._fix_position();
       const _style = this.style_selector;
-      
-      _style.left = _bounding.left + 51 + 'px';
-      _style.top = _bounding.top + 2 + 'px';
       _style.visibility = value ? 'visible' : 'hidden';
       _style.opacity = value ? '1' : '0';
       _style.transition = value
@@ -296,11 +339,5 @@ export default {
 .rc-anchor-normal .rc-anchor-pt {
   margin: 2px 10px 0 0;
   padding-right: 0px;
-}
-.gc-size-wrap {
-  max-width: 400px;
-  min-width: 300px;
-  min-height: 480px;
-  max-height: 580px;
 }
 </style>
