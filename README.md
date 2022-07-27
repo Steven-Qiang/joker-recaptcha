@@ -1,6 +1,8 @@
-# joke reCaptcha
-恶搞reCaptcha验证码。所给的图片并非问题所问。
-# 纯属恶搞
-示例 https://qiangmouren.github.io/joke-recaptcha/
+# Joker reCaptcha
+Joker (fake) reCaptcha
 
-![cBWHFTZ7musS2Lr.png](https://i.loli.net/2021/09/15/cBWHFTZ7musS2Lr.png)
+演示地址 [gh-page joker-recaptcha](https://qiangmouren.github.io/joker-recaptcha/)
+
+正如你所看到的，怎么选都不对，结果就像个小丑（Joker）
+
+![](https://s3.bmp.ovh/imgs/2022/07/27/4217470c36ba88f5.gif)

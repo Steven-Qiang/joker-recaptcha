@@ -1,5 +1,3 @@
-
-/** css来源为谷歌recaptcha官方。 */
 .goog-inline-block {
     position: relative;
     display: -moz-inline-box;
@@ -89,18 +87,23 @@
     0% {
         transform: rotateZ(0deg)
     }
+
     10% {
         transform: rotateZ(135deg)
     }
+
     25% {
         transform: rotateZ(245deg)
     }
+
     60% {
         transform: rotateZ(700deg)
     }
+
     75% {
         transform: rotateZ(810deg)
     }
+
     100% {
         transform: rotateZ(1080deg)
     }
@@ -127,6 +130,7 @@
         opacity: 1;
         transform: rotateZ(45deg)
     }
+
     100% {
         opacity: 1;
         transform: rotateZ(225deg)
@@ -994,7 +998,7 @@ body {
 }
 
 .rc-imageselect-keyboard {
-    outline: solid orange!important;
+    outline: solid orange !important;
     position: relative;
     z-index: 100
 }
@@ -1397,25 +1401,4 @@ td:focus {
 
 .rc-response-input-field-error, .rc-response-input-field-error:focus {
     border: 1px solid #ff0000
-}
-
-.gc-wrap {
-    background-color: rgb(255, 255, 255);
-    border: 1px solid rgb(204, 204, 204);
-    box-shadow: rgba(0, 0, 0, 0.2) 2px 2px 3px;
-    transition: visibility 0s linear 0s, opacity 0.3s linear 0s;
-    opacity: 1;
-    visibility: visible;
-    z-index: 2000000000;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.gc-size-wrap {
-    max-width: 400px;
-    min-width: 300px;
-    min-height: 480px;
-    max-height: 580px;
 }
