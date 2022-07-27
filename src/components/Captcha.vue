@@ -250,11 +250,8 @@ export default {
   },
   mounted() {
     window.addEventListener('resize', () => {
-      if (this.el_show) {
-        this._fix_position();
-      }
+      if (this.el_show) this._fix_position();
     });
-    this._show();
   },
   methods: {
     async _reload() {
