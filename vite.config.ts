@@ -4,5 +4,5 @@ import { defineConfig } from 'vite';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
-  base: process.env.CI ? '/joker-recaptcha/' : '/'
+  base: process.env.CI ? '/fake-recaptcha/' : '/',
 });

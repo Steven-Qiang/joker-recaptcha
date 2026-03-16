@@ -1,15 +1,15 @@
 <template>
   <div class="app-container">
-    <h1>Joke reCAPTCHA</h1>
+    <h1>Fake reCAPTCHA</h1>
     <p>恶搞版的 reCAPTCHA 验证码，无论怎么选都会失败哦！</p>
     <div class="captcha-container">
       <captcha />
     </div>
     <footer class="app-footer">
       <div class="footer-content">
-        <p>© {{ year }} Joke reCAPTCHA</p>
+        <p>© {{ year }} Fake reCAPTCHA</p>
         <a
-          href="https://github.com/Steven-Qiang/joker-recaptcha"
+          href="https://github.com/Steven-Qiang/fake-recaptcha"
           target="_blank"
         >GitHub</a>
       </div>

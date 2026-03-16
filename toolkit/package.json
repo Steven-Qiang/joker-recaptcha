@@ -1,0 +1,13 @@
+{
+  "name": "recaptcha-payload-crawler",
+  "version": "1.0.0",
+  "description": "Crawl reCAPTCHA payload images using Playwright",
+  "main": "crawler.js",
+  "scripts": {
+    "start": "node crawler.js",
+    "install:playwright": "npx playwright install"
+  },
+  "dependencies": {
+    "playwright": "^1.58.2"
+  }
+}

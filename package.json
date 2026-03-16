@@ -1,18 +1,18 @@
 {
-  "name": "joke-recaptcha",
+  "name": "fake-recaptcha",
   "type": "module",
   "version": "1.0.0",
   "private": true,
   "description": "恶搞版的 reCAPTCHA 验证码，无论怎么选都会失败",
-  "homepage": "https://Steven-Qiang.github.io/joke-recaptcha/",
+  "homepage": "https://Steven-Qiang.github.io/fake-recaptcha/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Steven-Qiang/joker-recaptcha.git"
+    "url": "git+https://github.com/Steven-Qiang/fake-recaptcha.git"
   },
   "keywords": [
     "vue",
     "recaptcha",
-    "joke",
+    "fake",
     "captcha",
     "vue3",
     "typescript"
