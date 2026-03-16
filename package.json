@@ -1,0 +1,41 @@
+{
+  "name": "joke-recaptcha",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "恶搞版的 reCAPTCHA 验证码，无论怎么选都会失败",
+  "homepage": "https://Steven-Qiang.github.io/joke-recaptcha/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Steven-Qiang/joker-recaptcha.git"
+  },
+  "keywords": [
+    "vue",
+    "recaptcha",
+    "joke",
+    "captcha",
+    "vue3",
+    "typescript"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --fix",
+    "prettier": "prettier --write \"**/*.{vue,js,ts,json,html,css,scss,md,mjs}\""
+  },
+  "dependencies": {
+    "vue": "^3.5.30"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^7.7.2",
+    "@types/node": "^24.12.0",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "@vue/tsconfig": "^0.9.0",
+    "eslint-plugin-format": "^2.0.1",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.3",
+    "vite": "^8.0.0",
+    "vue-tsc": "^3.2.5"
+  }
+}
