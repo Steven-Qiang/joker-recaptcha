@@ -193,10 +193,9 @@
 <script setup lang="ts">
 import type { CaptchaConfig, SuccessData, VerifyData } from './config/captcha';
 import { reactive, ref } from 'vue';
-import Captcha from './components/Captcha.vue';
 import { defaultCaptchaConfig } from './config/captcha';
 
-const payloadList: Record<string, string> = import.meta.glob('./assets/payload/*.png', {
+const payloadList: Record<string, string> = import.meta.glob('./payload/*.png', {
   eager: true,
   query: '?url',
   import: 'default',

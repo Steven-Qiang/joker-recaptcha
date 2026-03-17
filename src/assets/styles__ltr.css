@@ -8,7 +8,7 @@
   display: inline;
 }
 
-*:first-child + html .goog-inline-block {
+*:first-child+html .goog-inline-block {
   display: inline;
 }
 
@@ -417,10 +417,6 @@ body {
   background-repeat: no-repeat;
 }
 
-.rc-anchor-logo-img-ie8 {
-  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=concat(common.$recaptcha-gstatic, "./icon/logo_48.png"), sizingMethod="scale");
-}
-
 .rc-anchor-logo-text {
   cursor: default;
   font-family: Roboto, helvetica, arial, sans-serif;
@@ -445,7 +441,7 @@ body {
 
 .rc-anchor-logo-portrait {
   margin: 10px 0 0 26px;
-  width: 58px;
+  width: 58px;user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -459,7 +455,7 @@ body {
   width: 32px;
 }
 
-.rc-anchor-logo-landscape {
+.rc-anchor-logo-landscape {user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -1463,7 +1459,7 @@ td:focus {
   width: 112px;
 }
 
-.rc-imageselect-candidates > div {
+.rc-imageselect-candidates>div {
   -webkit-background-size: 112px 94px;
   background-size: 112px 94px;
   display: inline-block;
@@ -1476,7 +1472,7 @@ td:focus {
 .rc-imageselect-challenge {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  text-align: center;
+  text-align: center;user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;

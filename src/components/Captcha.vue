@@ -6,13 +6,14 @@
       <div
         id="rc-anchor-container"
         class="rc-anchor rc-anchor-normal rc-anchor-light"
+        :class="{ 'rc-anchor-checked': isSuccess }"
       >
         <div
           id="recaptcha-accessible-status"
           class="rc-anchor-aria-status"
           aria-hidden="true"
         >
-          Recaptcha 要求验证.
+          {{ isSuccess ? '验证成功' : 'Recaptcha 要求验证.' }}
         </div>
         <div class="rc-anchor-error-msg-container">
           <span class="rc-anchor-error-msg" aria-hidden="true" />
@@ -23,16 +24,17 @@
               <div class="rc-anchor-center-item rc-anchor-checkbox-holder">
                 <span
                   id="recaptcha-anchor"
-                  class="recaptcha-checkbox goog-inline-block recaptcha-checkbox-unchecked rc-anchor-checkbox"
+                  class="recaptcha-checkbox goog-inline-block rc-anchor-checkbox"
+                  :class="{ 'recaptcha-checkbox-checked': isSuccess, 'recaptcha-checkbox-unchecked': !isSuccess }"
                   role="checkbox"
-                  aria-checked="false"
+                  :aria-checked="isSuccess"
                   dir="ltr"
                   aria-labelledby="recaptcha-anchor-label"
-                  aria-disabled="false"
+                  :aria-disabled="isSuccess"
                   tabindex="0"
                 >
                   <div
-                    v-show="!isLoading"
+                    v-show="!isLoading && !isSuccess"
                     class="recaptcha-checkbox-border"
                     role="presentation"
                   />
@@ -62,7 +64,7 @@
               ><span
                 aria-live="polite"
                 aria-labelledby="recaptcha-accessible-status"
-              />进行人机身份验证</label>
+              />{{ isSuccess ? '验证成功' : '进行人机身份验证' }}</label>
             </div>
           </div>
         </div>
@@ -112,6 +114,9 @@
                     objectName
                   }}</strong>的所有图片
                 </div>
+                <div v-if="props.config.showAttemptCount" class="attempt-count">
+                  尝试次数: {{ attemptCount }}{{ props.config.maxAttempts > 0 ? `/${props.config.maxAttempts}` : '' }}
+                </div>
               </div>
               <div class="rc-imageselect-progress" />
             </div>
@@ -125,9 +130,9 @@
               >
                 <table class="rc-imageselect-table-33">
                   <tbody>
-                    <tr v-for="tr in 3" :key="tr">
+                    <tr v-for="tr in gridSize.rows" :key="tr">
                       <td
-                        v-for="td in 3"
+                        v-for="td in gridSize.cols"
                         :key="td"
                         role="button"
                         tabindex="0"
@@ -169,7 +174,7 @@
               v-show="errorCode === 'rc-imageselect-incorrect-response'"
               class="rc-imageselect-incorrect-response"
             >
-              请重试。
+              {{ props.config.errorMessage }}
             </div>
             <div
               v-show="errorCode === 'rc-imageselect-error-select-more'"
@@ -177,13 +182,19 @@
             >
               请选择所有相符的图片。
             </div>
+            <div
+              v-show="successMessage"
+              class="rc-imageselect-success-response"
+            >
+              {{ successMessage }}
+            </div>
           </div>
           <div class="rc-footer">
             <div class="rc-separator" />
             <div class="rc-controls">
               <div class="primary-controls">
                 <div class="rc-buttons">
-                  <div class="button-holder reload-button-holder">
+                  <div v-if="props.config.allowReload" class="button-holder reload-button-holder">
                     <button
                       id="recaptcha-reload-button"
                       class="rc-button goog-inline-block rc-button-reload"
@@ -232,20 +243,29 @@
 
 <script setup lang="ts">
 import type { CSSProperties } from 'vue';
+import type { CaptchaConfig, SuccessData, VerifyData } from '../config/captcha';
 import { onMounted, ref, useTemplateRef, watch } from 'vue';
+import { defaultCaptchaConfig } from '../config/captcha';
+
+const props = withDefaults(defineProps<{
+  config?: CaptchaConfig;
+  payloadList?: Record<string, string>;
+}>(), {
+  config: () => defaultCaptchaConfig,
+  payloadList: undefined,
+});
+
+const emit = defineEmits<{
+  verify: [data: VerifyData];
+  success: [data: SuccessData];
+  error: [message: string];
+}>();
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const payloadList = import.meta.glob('../assets/payload/*.png', {
-  eager: true,
-  query: '?url',
-  import: 'default',
-});
-const payloadKeys = Object.keys(payloadList);
-
-const OBJECT_NAMES = [
+const defaultObjectNames = [
   '公交车',
   '消防栓',
   '烟囱',
@@ -285,6 +305,9 @@ const OBJECT_NAMES = [
   '拖拉机',
 ];
 
+const payloadList = props.payloadList || [];
+let payloadKeys = Object.keys(payloadList);
+
 function getRandomItem<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
 }
@@ -295,7 +318,8 @@ function getRandomPayload(): string {
 }
 
 function getRandomObjectName(): string {
-  return getRandomItem(OBJECT_NAMES);
+  const objectList = props.config.customObjectNames.length > 0 ? props.config.customObjectNames : defaultObjectNames;
+  return getRandomItem(objectList);
 }
 
 const isVisible = ref(false);
@@ -308,6 +332,30 @@ const errorCode = ref<string>('');
 const objectName = ref(getRandomObjectName());
 const payloadFilename = ref(getRandomPayload());
 const containerRef = useTemplateRef('container');
+const attemptCount = ref(0);
+const isSuccess = ref(false);
+const successMessage = ref('');
+
+// 固定使用 3x3 网格
+const gridSize = { rows: 3, cols: 3 };
+
+// 根据难度级别调整参数
+interface DifficultyParams {
+  minSelection: number;
+  passProbability: number;
+}
+
+function getDifficultyParams(): DifficultyParams {
+  const difficulty = props.config.difficulty;
+  switch (difficulty) {
+    case 'easy':
+      return { minSelection: 1, passProbability: props.config.passProbability + 20 };
+    case 'hard':
+      return { minSelection: Math.max(3, props.config.minSelection), passProbability: Math.max(0, props.config.passProbability - 20) };
+    default:
+      return { minSelection: props.config.minSelection, passProbability: props.config.passProbability };
+  }
+}
 
 const selectorStyle = ref<CSSProperties>({
   backgroundColor: 'rgb(255, 255, 255)',
@@ -351,7 +399,15 @@ async function showError(code: string): Promise<void> {
   errorCode.value = '';
 }
 
+async function showSuccess(): Promise<void> {
+  successMessage.value = props.config.successMessage;
+  await delay(1500);
+  successMessage.value = '';
+}
+
 async function showCaptcha(): Promise<void> {
+  if (isSuccess.value) return;
+
   isLoading.value = true;
   await reloadCaptcha();
   await delay(300);
@@ -361,18 +417,60 @@ async function showCaptcha(): Promise<void> {
 }
 
 async function verifySelection(): Promise<void> {
-  if (selectedImages.value.length < 2) {
+  if (isSuccess.value) return;
+
+  const difficultyParams = getDifficultyParams();
+
+  if (selectedImages.value.length < difficultyParams.minSelection) {
+    emit('error', '请选择足够的图片');
     return showError('rc-imageselect-error-select-more');
   }
 
-  isReloading.value = true;
-  await delay(1000);
-  await showError('rc-imageselect-incorrect-response');
-  await handleReload();
+  attemptCount.value++;
+  emit('verify', {
+    attempt: attemptCount.value,
+    selectedImages: selectedImages.value,
+    difficulty: props.config.difficulty,
+  });
+
+  // 检查是否达到最大尝试次数
+  const reachedMaxAttempts = props.config.maxAttempts > 0 && attemptCount.value >= props.config.maxAttempts;
+  // 检查是否随机通过
+  const randomPass = difficultyParams.passProbability > 0 && Math.random() * 100 < difficultyParams.passProbability;
+
+  if (reachedMaxAttempts || randomPass) {
+    // 验证成功
+    isSuccess.value = true;
+    isReloading.value = true;
+    await delay(1000);
+
+    if (props.config.showSuccessMessage) {
+      await showSuccess();
+    }
+
+    if (props.config.autoCloseOnSuccess) {
+      isVisible.value = false;
+    }
+    isReloading.value = false;
+    emit('success', {
+      attempt: attemptCount.value,
+      reason: reachedMaxAttempts ? 'max_attempts' : 'random_pass',
+      difficulty: props.config.difficulty,
+    });
+  } else {
+    // 验证失败
+    isReloading.value = true;
+    await delay(1000);
+    await showError('rc-imageselect-incorrect-response');
+    if (props.config.autoReloadOnFailure) {
+      await handleReload();
+    }
+    emit('error', '验证失败');
+  }
 }
 
 function toggleImageSelection(key: string): void {
-  if (isReloading.value) return;
+  if (isReloading.value || isSuccess.value) return;
 
   if (selectedImages.value.includes(key)) {
     selectedImages.value = selectedImages.value.filter((item) => item !== key);
@@ -392,29 +490,31 @@ function fixPosition(): void {
 
   if (isMobile) {
     const width = window.innerWidth;
-    style.width = `${width - 5}px`;
-    wrapperSize.value = Math.floor((width - 5) / 3) - 7.55555;
+    style.width = `${width - 10}px`;
+    wrapperSize.value = Math.floor((width - 10) / 3) - 7.55555;
     // 居中
-    style.left = '0';
-    style.right = '0';
-    style.margin = 'auto';
+    style.left = '50%';
+    style.transform = 'translateX(-50%)';
+    style.top = `${bounding.top + 2}px`;
+    delete style.right;
+    delete style.margin;
   } else {
     style.width = '408px';
     wrapperSize.value = 128.5;
     style.left = `${bounding.left + 51}px`;
     style.top = `${bounding.top + 2}px`;
+    delete style.transform;
+    delete style.right;
     delete style.margin;
   }
 }
 
-// 生命周期
 onMounted(() => {
   window.addEventListener('resize', () => {
     if (isVisible.value) fixPosition();
   });
 });
 
-// 监听
 watch(isVisible, (value) => {
   fixPosition();
   const style = selectorStyle.value;
@@ -424,6 +524,26 @@ watch(isVisible, (value) => {
     ? 'visibility 0s linear 0s, opacity 0.3s linear'
     : 'visibility 0s linear 0.3s, opacity 0.3s linear';
 });
+
+watch(() => props.config, async () => {
+  objectName.value = getRandomObjectName();
+  attemptCount.value = 0;
+  isSuccess.value = false;
+  selectedImages.value = [];
+  errorCode.value = '';
+  successMessage.value = '';
+  isReloading.value = false;
+  if (isVisible.value) {
+    await reloadCaptcha();
+  }
+}, { deep: true });
+
+watch(() => props.payloadList, async () => {
+  payloadKeys = Object.keys(props.payloadList || payloadList);
+  if (isVisible.value) {
+    await reloadCaptcha();
+  }
+}, { deep: true });
 </script>
 
 <style>
@@ -527,6 +647,22 @@ watch(isVisible, (value) => {
   animation-play-state: running;
 }
 
+.rc-imageselect-success-response {
+  color: #4caf50;
+  font-size: 12px;
+  margin-top: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.attempt-count {
+  font-size: 11px;
+  color: #666;
+  margin-top: 5px;
+  text-align: center;
+  font-style: italic;
+}
+
 .rc-challenge-help {
   display: none;
 }
@@ -534,5 +670,17 @@ watch(isVisible, (value) => {
 .rc-anchor-normal .rc-anchor-pt {
   margin: 2px 10px 0 0;
   padding-right: 0px;
+}
+
+.rc-anchor-checked {
+  opacity: 0.8;
+}
+
+.recaptcha-checkbox-checked {
+  background-position: -58px 0;
+}
+
+.recaptcha-checkbox-checked .recaptcha-checkbox-checkmark {
+  opacity: 1;
 }
 </style>
