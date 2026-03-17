@@ -2,12 +2,14 @@
   "name": "fake-recaptcha",
   "type": "module",
   "version": "1.0.0",
-  "private": true,
-  "description": "恶搞版的 reCAPTCHA 验证码，无论怎么选都会失败",
-  "homepage": "https://Steven-Qiang.github.io/fake-recaptcha/",
+  "description": "一个模仿 Google reCAPTCHA 的 Vue 3 验证码组件，外观和交互与真实的 reCAPTCHA 几乎一致，但验证逻辑完全可控",
+  "homepage": "https://github.com/Steven-Qiang/fake-recaptcha#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Steven-Qiang/fake-recaptcha.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Steven-Qiang/fake-recaptcha/issues"
   },
   "keywords": [
     "vue",
@@ -15,7 +17,9 @@
     "fake",
     "captcha",
     "vue3",
-    "typescript"
+    "typescript",
+    "verification",
+    "widget"
   ],
   "exports": {
     ".": {

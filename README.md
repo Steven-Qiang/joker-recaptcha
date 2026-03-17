@@ -1,6 +1,10 @@
 # Fake reCAPTCHA
 
-恶搞版的 reCAPTCHA 验证码组件，完全模仿 Google reCAPTCHA 的外观和交互，但无论用户如何选择，都会验证失败（或按配置随机通过）。
+[![npm version](https://img.shields.io/npm/v/fake-recaptcha.svg)](https://www.npmjs.com/package/fake-recaptcha)
+[![npm downloads](https://img.shields.io/npm/dm/fake-recaptcha.svg)](https://www.npmjs.com/package/fake-recaptcha)
+[![license](https://img.shields.io/npm/l/fake-recaptcha.svg)](https://github.com/Steven-Qiang/fake-recaptcha/blob/main/LICENSE)
+
+一个模仿 Google reCAPTCHA 的 Vue 3 验证码组件，外观和交互与真实的 reCAPTCHA 几乎一致，但验证逻辑完全可控（默认会按配置随机通过或失败）。
 
 ![](screenshots/example.png)
 
@@ -12,17 +16,15 @@
 
 ## 安装
 
-### 从 GitHub 仓库安装
-
 ```bash
-# 使用 npm
-npm install git+https://github.com/Steven-Qiang/fake-recaptcha.git
+# npm
+npm install fake-recaptcha
 
-# 使用 yarn
-yarn add git+https://github.com/Steven-Qiang/fake-recaptcha.git
+# yarn
+yarn add fake-recaptcha
 
-# 使用 pnpm
-pnpm add git+https://github.com/Steven-Qiang/fake-recaptcha.git
+# pnpm
+pnpm add fake-recaptcha
 ```
 
 ## 快速开始
@@ -32,12 +34,12 @@ pnpm add git+https://github.com/Steven-Qiang/fake-recaptcha.git
 ```vue
 <template>
   <div>
-    <fake-captcha />
+    <FakeCaptcha />
   </div>
 </template>
 
 <script setup lang="ts">
-import FakeCaptcha from "fake-recaptcha";
+import FakeCaptcha from 'fake-recaptcha'
 </script>
 ```
 
@@ -46,7 +48,7 @@ import FakeCaptcha from "fake-recaptcha";
 ```vue
 <template>
   <div>
-    <fake-captcha
+    <FakeCaptcha
       :config="captchaConfig"
       :payload-list="payloadList"
       @success="handleSuccess"
@@ -57,40 +59,40 @@ import FakeCaptcha from "fake-recaptcha";
 </template>
 
 <script setup lang="ts">
-import type { CaptchaConfig, SuccessData, VerifyData } from "fake-recaptcha";
-import FakeCaptcha, { defaultCaptchaConfig } from "fake-recaptcha";
+import type { CaptchaConfig, SuccessData, VerifyData } from 'fake-recaptcha'
+import FakeCaptcha, { defaultCaptchaConfig } from 'fake-recaptcha'
 
 // 准备验证码图片列表
 const dynPayloadList: Record<string, string> = import.meta.glob(
-  "./assets/payload/*.png",
+  './assets/payload/*.png',
   {
     eager: true,
-    query: "?url",
-    import: "default",
+    query: '?url',
+    import: 'default',
   },
-);
-const payloadList = Object.values(dynPayloadList);
+)
+const payloadList = Object.values(dynPayloadList)
 
 // 自定义配置
 const captchaConfig: CaptchaConfig = {
   ...defaultCaptchaConfig,
   maxAttempts: 3, // 最大尝试次数
   passProbability: 20, // 通过概率 20%
-  difficulty: "medium", // 难度级别
-};
+  difficulty: 'medium', // 难度级别
+}
 
 // 事件处理
 function handleSuccess(data: SuccessData) {
-  console.log("验证成功", data);
+  console.log('验证成功', data)
   // data: { attempt: 3, reason: 'max_attempts' | 'random_pass', difficulty: 'medium' }
 }
 
 function handleError(message: string) {
-  console.log("验证失败", message);
+  console.log('验证失败', message)
 }
 
 function handleVerify(data: VerifyData) {
-  console.log("验证尝试", data);
+  console.log('验证尝试', data)
   // data: { attempt: 1, selectedImages: ['1_1', '2_2'], difficulty: 'medium' }
 }
 </script>
