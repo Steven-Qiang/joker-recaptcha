@@ -5,7 +5,7 @@
 
     <!-- 验证码组件 -->
     <div class="captcha-container">
-      <captcha
+      <fake-captcha
         :config="captchaConfig"
         :payload-list="payloadList"
         @success="handleSuccess"
@@ -66,30 +66,21 @@
         <!-- 布尔选项 -->
         <div class="form-group checkbox-group">
           <label>
-            <input
-              v-model="captchaConfig.showSuccessMessage"
-              type="checkbox"
-            >
+            <input v-model="captchaConfig.showSuccessMessage" type="checkbox">
             显示成功消息
           </label>
         </div>
 
         <div class="form-group checkbox-group">
           <label>
-            <input
-              v-model="captchaConfig.showAttemptCount"
-              type="checkbox"
-            >
+            <input v-model="captchaConfig.showAttemptCount" type="checkbox">
             显示尝试次数
           </label>
         </div>
 
         <div class="form-group checkbox-group">
           <label>
-            <input
-              v-model="captchaConfig.autoCloseOnSuccess"
-              type="checkbox"
-            >
+            <input v-model="captchaConfig.autoCloseOnSuccess" type="checkbox">
             成功后自动关闭
           </label>
         </div>
@@ -106,10 +97,7 @@
 
         <div class="form-group checkbox-group">
           <label>
-            <input
-              v-model="captchaConfig.allowReload"
-              type="checkbox"
-            >
+            <input v-model="captchaConfig.allowReload" type="checkbox">
             允许刷新按钮
           </label>
         </div>
@@ -117,18 +105,12 @@
         <!-- 消息配置 -->
         <div class="form-group full-width">
           <label>成功消息</label>
-          <input
-            v-model="captchaConfig.successMessage"
-            type="text"
-          >
+          <input v-model="captchaConfig.successMessage" type="text">
         </div>
 
         <div class="form-group full-width">
           <label>失败消息</label>
-          <input
-            v-model="captchaConfig.errorMessage"
-            type="text"
-          >
+          <input v-model="captchaConfig.errorMessage" type="text">
         </div>
 
         <!-- 物体名称配置 -->
@@ -139,11 +121,7 @@
             placeholder="例如：公交车,消防栓,烟囱,山,飞机"
             rows="3"
           />
-          <button
-            type="button"
-            class="btn-primary"
-            @click="updateObjectNames"
-          >
+          <button type="button" class="btn-primary" @click="updateObjectNames">
             更新默认物体名称
           </button>
         </div>
@@ -167,11 +145,7 @@
 
         <!-- 重置按钮 -->
         <div class="form-group full-width">
-          <button
-            type="button"
-            class="btn-reset"
-            @click="resetConfig"
-          >
+          <button type="button" class="btn-reset" @click="resetConfig">
             重置配置
           </button>
         </div>
@@ -181,25 +155,27 @@
     <footer class="app-footer">
       <div class="footer-content">
         <p>© {{ year }} Fake reCAPTCHA</p>
-        <a
-          href="https://github.com/Steven-Qiang/fake-recaptcha"
-          target="_blank"
-        >GitHub</a>
+        <a href="https://github.com/Steven-Qiang/fake-recaptcha" target="_blank">GitHub</a>
       </div>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { CaptchaConfig, SuccessData, VerifyData } from './config/captcha';
+import type { CaptchaConfig, SuccessData, VerifyData } from 'fake-recaptcha';
+import FakeCaptcha, { defaultCaptchaConfig } from 'fake-recaptcha';
 import { reactive, ref } from 'vue';
-import { defaultCaptchaConfig } from './config/captcha';
 
-const payloadList: Record<string, string> = import.meta.glob('./payload/*.png', {
-  eager: true,
-  query: '?url',
-  import: 'default',
-});
+/** 图片可以自定义或者去toolkit目录下执行爬虫抓取 */
+const dynPayloadList: Record<string, string> = import.meta.glob(
+  './payload/*.png',
+  {
+    eager: true,
+    query: '?url',
+    import: 'default',
+  },
+);
+const payloadList = Object.values(dynPayloadList);
 
 const year = new Date().getFullYear();
 const customObjectNamesInput = ref('');
@@ -209,11 +185,13 @@ const objectNamesInput = ref('');
 const captchaConfig = reactive<CaptchaConfig>({ ...defaultCaptchaConfig });
 
 function handleSuccess(data: SuccessData) {
-  alert(`验证成功！尝试了 ${data.attempt} 次，通过原因：${data.reason === 'max_attempts' ? '达到最大尝试次数' : '随机通过'}，难度：${data.difficulty}`);
+  alert(
+    `验证成功！尝试了 ${data.attempt} 次，通过原因：${data.reason === 'max_attempts' ? '达到最大尝试次数' : '随机通过'}，难度：${data.difficulty}`,
+  );
 }
 
 function handleError(message: string) {
-  alert(`验证失败: ${message}`);
+  console.error(`验证失败: ${message}`);
 }
 
 function handleVerify(data: VerifyData) {

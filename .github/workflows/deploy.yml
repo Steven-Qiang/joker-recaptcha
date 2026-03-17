@@ -27,10 +27,13 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: pnpm run build
+        run: |
+          pnpm run build
+          cd demo
+          pnpm run build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ./demo/dist

@@ -6,12 +6,12 @@ export default antfu(
     isInEditor: false,
     typescript: true,
     formatters: true,
+    markdown: false,
     stylistic: {
       indent: 2,
       quotes: 'single',
       semi: true,
     },
-
     vue: {
       overrides: {
         'vue/prefer-template': 'warn',

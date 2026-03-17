@@ -1,0 +1,4 @@
+packages:
+  - fake-recaptcha
+  - ./demo/
+  - ./toolkit/

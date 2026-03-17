@@ -60,7 +60,9 @@ export const defaultCaptchaConfig: CaptchaConfig = {
 };
 
 // 合并配置
-export function mergeCaptchaConfig(config: Partial<CaptchaConfig>): CaptchaConfig {
+export function mergeCaptchaConfig(
+  config: Partial<CaptchaConfig>,
+): CaptchaConfig {
   return {
     ...defaultCaptchaConfig,
     ...config,

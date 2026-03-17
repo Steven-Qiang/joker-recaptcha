@@ -82,7 +82,9 @@ async function crawlReCaptcha() {
 
     if (challengeFrame) {
       try {
-        await challengeFrame.waitForSelector('#recaptcha-reload-button', { timeout: 30000 });
+        await challengeFrame.waitForSelector('#recaptcha-reload-button', {
+          timeout: 30000,
+        });
         console.log('Starting infinite refresh loop...');
         let refreshCount = 0;
         while (true) {
